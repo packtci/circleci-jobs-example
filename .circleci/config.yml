@@ -1,0 +1,25 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.11.3
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Run the Sort Test to sort by first name
+          command: $(npm bin)/tape sort_test.js
+      - run:
+          name: Compute Standard Deviation
+          command: $(npm bin)/tape standard_deviation_test.js
+      - run:
+          name: Find the Text and Replace It
+          command: $(npm bin)/tape find_text_test.js
+      - run: |
+          echo "Generate Code Coverage"
+          npm test
+          echo "Show the coverage"
+          npm run coverage
+        
