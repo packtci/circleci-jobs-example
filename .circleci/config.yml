@@ -8,18 +8,40 @@ jobs:
       - run:
           name: Install Dependencies
           command: npm install
+  test:
+    docker:
+      - image: circleci/node:8.11.3
+    steps:
+      - checkout
       - run:
-          name: Run the Sort Test to sort by first name
-          command: $(npm bin)/tape sort_test.js
+          name: Install Dependencies
+          command: npm install
       - run:
-          name: Compute Standard Deviation
-          command: $(npm bin)/tape standard_deviation_test.js
+          name: Run Tests and Run Code Coverage with NYC
+          command: |
+            echo "Generate Code Coverage"
+            npm test
+            echo "Show the coverage"
+            npm run coverage
+  deploy:
+    docker:
+      - image: buildpack-deps:trusty
+    steps:
+      - checkout
       - run:
-          name: Find the Text and Replace It
-          command: $(npm bin)/tape find_text_test.js
-      - run: |
-          echo "Generate Code Coverage"
-          npm test
-          echo "Show the coverage"
-          npm run coverage
+          name: Deploy Master Branch to Heroku
+          command: |
+            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+
+workflows:
+  version: 2
+  build_test_and_deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
         

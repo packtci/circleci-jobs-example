@@ -1,2 +1,1 @@
-# circleci-jobs-example
-A repository for circleci jobs example
+# A repository looking at CircleCI YML Configuration
