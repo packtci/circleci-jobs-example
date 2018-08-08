@@ -13,9 +13,18 @@ jobs:
       - image: circleci/node:8.11.3
     steps:
       - checkout
+      # special step to restore the dependency cache
+      - restore_cache:
+          key: v2-{{ checksum "package.json" }}
+      # special step to save the dependency cache
       - run:
           name: Install Dependencies
           command: npm install
+      - save_cache:
+          key: v2-{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
       - run:
           name: Run Tests and Run Code Coverage with NYC
           command: |
@@ -23,6 +32,12 @@ jobs:
             npm test
             echo "Show the coverage"
             npm run coverage
+      - store_artifacts:
+          path: test-results.xml
+          prefix: tests
+      - store_artifacts:
+          path: coverage
+          prefix: coverage
   deploy:
     docker:
       - image: buildpack-deps:trusty
