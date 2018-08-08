@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc tape *_test.js",
-    "coverage": "nyc report  --reporter=text-lcov"
+    "coverage": "nyc report  --reporter=lcov"
   },
   "repository": {
     "type": "git",
